@@ -1,0 +1,17 @@
+/mobile/node_modules/
+/server/node_modules/
+
+**/node_modules/
+
+/ml_model/__pycache__/
+/ml_model/*.py[cod]
+
+*.log
+
+.env
+
+.DS_Store
+
+.vscode/
+.idea/
+*.swp
