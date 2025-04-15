@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import axios from 'axios';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -45,10 +46,24 @@ export const classifyImage = async (req, res) => {
     // results.push({ ...result, imagePath });
 
     // await writeFile(resultsPath, JSON.stringify(results, null, 2), 'utf-8');
+    let label = result.label
+    let confidence = result.confidence
+    console.log({imagePath})   //uploads\1744683080110-dog.jpg
+    let url = `${imagePath.replace(/\\/g, '/')}`;
+
 
     res.json({
-      ...result,
+      label,
+      confidence,
       imageUrl: `http://localhost:5000/${imagePath}`,
+    });
+
+    axios.post('http://localhost:5000/draft', {
+      label,
+      confidence,
+      imagePath: url,
+    }).catch(err => {
+      console.error('Failed to create draft post:', err.response?.data || err.message);
     });
 
   } catch (err) {
