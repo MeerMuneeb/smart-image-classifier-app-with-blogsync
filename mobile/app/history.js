@@ -2,32 +2,47 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react
 import { useEffect, useState } from 'react';
 import HistoryCard from '../components/HistoryCard';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function History() {
-  const router = useRouter();
+    const router = useRouter();
+    const [history, setHistory] = useState([])
 
-    const handlePress = () => {
-        console.log("hello");
-    };
-    const historyData = [
-        {
-          id: '1',
-          time: '2:15 PM',
-          date: '2025-04-14',
-          picture: require('../assets/images/camera.png'), // local image
-          label: 'Toyota Corolla 2018',
-          confidence: '95%',
-        },
-        {
-          id: '2',
-          time: '11:03 AM',
-          date: '2025-04-13',
-          picture: require('../assets/images/camera.png'),
-          label: 'Honda Civic 2017',
-          confidence: '93%',
-        },
-      ];
+    useEffect(() => {
+        const getHistory = async () => {
+          try {
+            const data = await AsyncStorage.getItem('history');
+            const parsed = data ? JSON.parse(data) : [];
+            setHistory(parsed); 
+          } catch (e) {
+            console.log('Error reading history:', e);
+            setHistory([]);
+          }
+        };
+      
+        getHistory();
+      }, []);
+      
+
+    // const history = [
+    //     {
+    //         id: '1',
+    //         time: '2:15 PM',
+    //         date: '2025-04-14',
+    //         picture: 'http://192.168.125.2:5000/uploads\\1744691637917-photo.jpg', // local image
+    //         label: 'Toyota Corolla 2018',
+    //         confidence: '95%',
+    //     },
+    //     {
+    //         id: '2',
+    //         time: '11:03 AM',
+    //         date: '2025-04-13',
+    //         picture: require('../assets/images/camera.png'),
+    //         label: 'Honda Civic 2017',
+    //         confidence: '93%',
+    //     },
+    // ];
 
     return (
         <View style={styles.container}>
@@ -38,7 +53,7 @@ export default function History() {
                 <Text style={styles.h1}>History</Text>
             </View>
             <FlatList
-                data={historyData}
+                data={history}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <HistoryCard
