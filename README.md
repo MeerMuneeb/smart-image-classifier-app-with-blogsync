@@ -16,18 +16,18 @@ A full-stack cross-platform app using **React Native**, **Node.js**, and **Pytho
 
 ## 🛠 Tech Stack
 
-- **Frontend:** React Native (Native CLI)  
+- **Frontend:** React Native (Expo Go)  
 - **Backend:** Node.js + Express  
-- **Image Classifier:** Python + torchvision (MobileNetV2)  
+- **Image Classifier:** Python + tensorflow (MobileNetV2)  
 - **WordPress Integration:** REST API + Application Passwords  
-- **Local Storage:** JSON/SQLite  
+- **Local Storage:** AsyncStorage
 
 ---
 
 ## 📁 Folder Structure
 
 ```
-smart-image-classifier/
+smart-image-classifier-app-with-blog-sync/
 ├── mobile       # React Native app 
 ├── server       # Node.js backend 
 └── ml_model     # Python image classification script
@@ -50,8 +50,8 @@ cd smart-image-classifier
 
 ```bash
 cd ml_model
-pip install torch torchvision pillow
-python classify.py path_to_image.jpg
+pip install -r requirements.txt
+python classify.py dog.jpg
 ```
 
 ---
@@ -77,23 +77,24 @@ Update `routes/wordpress.js` with:
 ```bash
 cd ../mobile
 npm install
-npx react-native run-android   # or run-ios
+npx expo start
 ```
 
 ---
 
 ### 🔐 WordPress Setup
 
-1. Use a test WordPress site  
-2. Enable Application Passwords plugin or feature  
+1. Use a local WordPress site  
+2. Add Application Passowrd 
 3. Ensure your site uses HTTPS  
-4. Update credentials in `/server/routes/wordpress.js`
+4. Update credentials in `/server/routes/draftController.js`
 
 ---
 
 ## 📌 Known Issues
 
 - HTTPS is required for uploading images to WordPress  
-- Ensure Python and Node.js versions are compatible  
+- Ensure Python and Node.js versions are compatible
+- Use Expo Go for previewing the mobile app  
 
 --
