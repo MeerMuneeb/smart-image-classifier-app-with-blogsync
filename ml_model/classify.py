@@ -9,7 +9,12 @@ from tensorflow.keras.applications.mobilenet_v2 import (
 from tensorflow.keras.preprocessing import image 
 from PIL import Image     
 import json              
-import sys               
+import sys
+import io
+import os
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # Suppress TensorFlow logs
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')               
 
 def load_and_prepare_image(img_path):
     img = Image.open(img_path).convert('RGB')
@@ -24,7 +29,7 @@ def predict(img_path):
 
     processed_img = load_and_prepare_image(img_path)
 
-    predictions = model.predict(processed_img)
+    predictions = model.predict(processed_img, verbose=0)
 
     decoded = decode_predictions(predictions, top=1)[0][0]
 
@@ -40,13 +45,14 @@ def predict(img_path):
     return result
 
 if __name__ == "__main__":
-
     if len(sys.argv) != 2:
-        print("Usage: python predict_image.py <image_path>")
+        print(json.dumps({ "error": "Image path argument missing." }))
+        sys.exit(1)
     else:
-
-        img_path = sys.argv[1]
-
-        output = predict(img_path)
-
-        print(json.dumps(output, indent=2))
+        try:
+            img_path = sys.argv[1]
+            output = predict(img_path)
+            print(json.dumps(output))
+        except Exception as e:
+            print(json.dumps({ "error": str(e) }))
+            sys.exit(1)

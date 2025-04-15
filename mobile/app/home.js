@@ -1,10 +1,15 @@
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
+const apiUrl = 'http://192.168.125.2:5000/classify';
 
 export default function Home() {
   const [picture, setPicture] = useState(null);
+  const [loading, setLoading] = useState(false)
+  const [ressponse, setResponse] = useState();
+
   const router = useRouter();
 
   const pickImage = async () => {
@@ -20,8 +25,44 @@ export default function Home() {
     }
   };
 
-  const handlePress = () => {
-    console.log("hello");
+  // useEffect(() => {
+  //   if (loading === true){
+
+  //   }
+  // }, [loading]);
+
+  useEffect(() => {
+    if(ressponse){
+    <View>
+      <Text>{ressponse}</Text>
+    </View>}
+  }, [ressponse]);
+
+  const handlePress = async () => {
+    setLoading(true)
+    const formData = new FormData();
+    formData.append('image', {
+      uri: picture,
+      name: 'photo.jpg',
+      type: 'image/jpeg',
+    });
+
+    try {
+      console.log('sending...')
+      const response = await axios.post(apiUrl, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response.data)
+      setResponse(response.data)
+
+    } catch (error) {
+      console.log('Error:', error.message);
+      const errorMessage = error.response?.data?.error || "Error uploading image";
+      console.error(errorMessage);
+      throw new Error(errorMessage);
+    }
   };
 
   return (
